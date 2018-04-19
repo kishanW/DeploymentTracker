@@ -7,6 +7,8 @@ namespace DeploymentTracker.web.Models
     {
         public EnvironmentEntity Environment { get; set; }
         public ICollection<ChecklistTemplateTaskEntity> TemplateTasks { get; set; }
+        public string Name { get; set; }
+        public bool IsActive { get; set; }
     }
 
 

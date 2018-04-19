@@ -1,0 +1,70 @@
+﻿@model IEnumerable<DeploymentTracker.web.Models.ChecklistTemplateEntity>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<p class="display-4">Manage Checklist Templates</p>
+<p>
+    <a asp-action="Create" class="btn btn-outline-primary">Create New</a>
+</p>
+
+<table class="table table-bordered table-hover table-striped">
+    <thead>
+    <tr>
+        <th>
+            Active
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatedOn)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatedBy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastModifiedOn)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastModifiedBy)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @if (item.IsActive)
+                {
+                    <i class="fas fa-check-circle tableRowIcon text-success"></i>
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedOn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastModifiedOn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastModifiedBy)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-pen-square tableRowIcon"></i></a>
+                <a asp-action="Details" asp-route-id="@item.Id"><i class="fas fa-info-circle tableRowIcon"></i></a>
+                <a asp-action="Delete" asp-route-id="@item.Id"><i class="fas fa-times-circle tableRowIcon text-danger"></i></a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
