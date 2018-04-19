@@ -1,0 +1,95 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+
+<div class="row">
+    <div class="col-lg-3">
+        <p class="display-4">Send message</p>
+        <form id="messageForm">
+            <div class="input-group mb-3">
+                <input type="text" id="messageInput" class="form-control" placeholder="Your message" aria-label="message" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-primary" type="submit">Send</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-lg-3">
+        <p class="display-4">Notifications</p>
+        <p>You will see notifications as they come in...</p>
+        <ul id="notifications" class="list-group list-group-flush">
+
+        </ul>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/lib/signalr-r/signalr.min.js"></script>
+    <script>
+        var depTrackerApp = {
+            notificationHub: "",
+            currentUser: "@User.Identity.Name" || "new user"
+        };
+
+        var transport = signalR.TransportType.WebSockets;
+        var connection = new signalR.HubConnection('/notifications', { transport: transport });
+        connection.on('send',
+            data => {
+                console.log(data);
+            });
+
+        connection.start()
+            .then(() => connection.invoke('send', "Hub", `${depTrackerApp.currentUser} connected`));
+
+        $(document).ready(function() {
+            depTrackerApp.ShowNotification("app initializing");
+            depTrackerApp.ShowNotification("app initialized");
+        });
+
+
+        depTrackerApp.ShowNotification = function(msg) {
+            var notification = `<li class='list-group-item list-group-item-info'> ${msg} </li>`;
+            var notificaionElem = $(notification);
+
+            var notificationsList = $("#notifications");
+
+
+            notificationsList.find("li").each(function() {
+                $(this).removeClass("list-group-item-info");
+            });
+
+            notificationsList.prepend(notificaionElem);
+        }
+
+
+        // SIGNAL-R STUFF
+
+
+        $(document).on("submit",
+            "#messageForm",
+            function(e) {
+                e.preventDefault();
+
+                depTrackerApp.HandlemessageFormSubmit($(this));
+            });
+
+
+        depTrackerApp.HandlemessageFormSubmit = function(form) {
+            var messageInput = $("#messageInput");
+
+            connection.invoke('send', depTrackerApp.currentUser, messageInput.val());
+            messageInput.val("");
+        }
+
+        /*connection.start().done(function() {
+            depTrackerApp.ShowNotification("Hub connected.");
+        });*/
+
+        connection.on('broadcastMsg',
+            (message) => {
+                depTrackerApp.ShowNotification(message);
+            });
+    </script>
+}
