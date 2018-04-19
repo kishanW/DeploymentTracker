@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using System;
+using System.Linq;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using DeploymentTracker.web.Models;
+using System.Web;
 
 namespace DeploymentTracker.web.Data
 {
@@ -19,7 +22,6 @@ namespace DeploymentTracker.web.Data
         public DbSet<ChecklistTemplateTaskEntity> ChecklistTemplateTasks { get; set; }
         public DbSet<ChecklistTaskEntity> ChecklistTasks { get; set; }
 
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -33,6 +35,27 @@ namespace DeploymentTracker.web.Data
 
             builder.Entity<ChecklistTemplateTaskEntity>().ToTable("ChecklistTemplateTaskEntity");
             builder.Entity<ChecklistTaskEntity>().ToTable("ChecklistTaskEntity");
+        }
+
+        public override int SaveChanges()
+        {
+            var entities = ChangeTracker.Entries()
+                                        .Where(x => x.Entity is BaseEntity 
+                                                    && (x.State == EntityState.Added || x.State == EntityState.Modified)
+                                                    );
+
+            var currentUsername = !string.IsNullOrEmpty(System.Security.Claims.ClaimsPrincipal.Current?.Identity?.Name)
+                                      ? System.Security.Claims.ClaimsPrincipal.Current.Identity.Name
+                                      : "Anonymous";
+
+            foreach (var entity in entities)
+            {
+                ((BaseEntity)entity.Entity).LastModifiedOn = DateTime.UtcNow;
+                ((BaseEntity)entity.Entity).LastModifiedBy = currentUsername;
+            }
+
+
+            return base.SaveChanges();
         }
     }
 }

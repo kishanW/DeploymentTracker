@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DeploymentTracker.web.Models
 {
@@ -19,7 +20,9 @@ namespace DeploymentTracker.web.Models
 
     public class ChecklistTaskEntity : BaseEntity
     {
+        [Required]
         public TaskEntity Task { get; set; }
+        [Required]
         public ChecklistEntity Checklist { get; set; }
     }
 }

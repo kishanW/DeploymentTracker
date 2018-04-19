@@ -5,6 +5,12 @@ namespace DeploymentTracker.web.Models
 {
     public class BaseEntity
     {
+        public BaseEntity()
+        {
+            CreatedOn = DateTime.Now;
+            LastModifiedOn = DateTime.Now;
+        }
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         public DateTime CreatedOn { get; set; }
