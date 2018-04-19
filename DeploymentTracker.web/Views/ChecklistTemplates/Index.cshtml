@@ -60,8 +60,9 @@
                 @Html.DisplayFor(modelItem => item.LastModifiedBy)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-pen-square tableRowIcon"></i></a>
                 <a asp-action="Details" asp-route-id="@item.Id"><i class="fas fa-info-circle tableRowIcon"></i></a>
+                <a asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-pen-square tableRowIcon"></i></a>
+                <a asp-action="EditTemplate" asp-route-id="@item.Id"><i class="fas fa-tasks tableRowIcon"></i></a>
                 <a asp-action="Delete" asp-route-id="@item.Id"><i class="fas fa-times-circle tableRowIcon text-danger"></i></a>
             </td>
         </tr>

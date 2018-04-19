@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DeploymentTracker.web.Data;
 using DeploymentTracker.web.Models;
+using DeploymentTracker.web.ViewModels;
 
 namespace DeploymentTracker.web.Controllers
 {
@@ -149,6 +150,105 @@ namespace DeploymentTracker.web.Controllers
         private bool ChecklistTemplateEntityExists(Guid id)
         {
             return _context.ChecklistTemplates.Any(e => e.Id == id);
+        }
+
+
+        public async Task<IActionResult> EditTemplate(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var checklistTemplateEntity = await _context.ChecklistTemplates
+                                                        .Include(x=> x.TemplateTasks)
+                                                        .Include(x=> x.Environment)
+                                                        .SingleOrDefaultAsync(m => m.Id == id);
+            if (checklistTemplateEntity == null)
+            {
+                return NotFound();
+            }
+
+            var environments = await _context.Environents.ToListAsync();
+            var tasks = await _context.Tasks.ToListAsync();
+
+            var viewModel = new ChecklistTemplateEditTaskViewModel
+                            {
+                                Id = checklistTemplateEntity.Id,
+                                ChecklistTemplate = checklistTemplateEntity,
+                                Environments = environments.Select(x=> new SelectListItem {Text = x.Name, Value = x.Id.ToString(), Selected = checklistTemplateEntity.Environment?.Id != null && checklistTemplateEntity.Environment?.Id == x.Id }).ToList(),
+                                Tasks = tasks.Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString(), Selected = checklistTemplateEntity.TemplateTasks.Any(t=> t.Task.Id == x.Id)}).ToList()
+                            };
+            
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditTemplate(Guid id, [Bind("Id,SelectedEnvironment,SelectedTasks")] ChecklistTemplateEditTaskViewModel viewModel)
+        {
+            if (viewModel.Id == Guid.Empty)
+            {
+                return NotFound();
+            }
+
+            var checklistTemplateEntity = await _context.ChecklistTemplates
+                                                        .SingleOrDefaultAsync(m => m.Id == viewModel.Id);
+            if (checklistTemplateEntity == null)
+            {
+                return NotFound();
+            }
+
+
+            var selectedTasks = _context.Tasks.Where(m => viewModel.SelectedTasks.Contains(m.Id));
+            var selectedEnvironment = await _context.Environents.SingleOrDefaultAsync(m => m.Id == viewModel.SelectedEnvironment);
+
+            try
+            {
+                checklistTemplateEntity.Environment = selectedEnvironment;
+                var existingTemplateTasks = _context.ChecklistTemplateTasks
+                                                    .Where(ctt => ctt.Template.Id == checklistTemplateEntity.Id);
+
+                //add new template tasks
+                foreach (var selectedTask in selectedTasks)
+                {
+                    var isExistingTemplateTask = existingTemplateTasks.Any(ctt => ctt.Task.Id == selectedTask.Id);
+                    if (!isExistingTemplateTask)
+                    {
+                        var newTemplateTask = new ChecklistTemplateTaskEntity
+                                              {
+                                                  Task = selectedTask,
+                                                  Template = checklistTemplateEntity
+                                              };
+                        _context.ChecklistTemplateTasks.Add(newTemplateTask);
+                    }
+                }
+
+                //remove old ones
+                var templateTasksToRemove = existingTemplateTasks.Where(x => !selectedTasks.Any(st => st.Id == x.Task.Id));
+                foreach (var existingTemplateTask in templateTasksToRemove)
+                {
+                    if (selectedTasks.All(x=> x.Id != existingTemplateTask.Id))
+                    {
+                        _context.ChecklistTemplateTasks.Remove(existingTemplateTask);
+                    }
+                }
+
+                _context.Update(checklistTemplateEntity);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ChecklistTemplateEntityExists(checklistTemplateEntity.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }

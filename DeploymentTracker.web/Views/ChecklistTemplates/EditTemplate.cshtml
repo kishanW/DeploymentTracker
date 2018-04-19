@@ -1,0 +1,43 @@
+﻿@model DeploymentTracker.web.ViewModels.ChecklistTemplateEditTaskViewModel
+
+@{
+    ViewBag.Title = "title";
+}
+
+<p class="display-4">Add Tasks To @Model.ChecklistTemplate.Name</p>
+
+<hr/>
+
+<form asp-action="EditTemplate">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="form-group">
+                <label for="SelectedEnvironment">Environment</label>
+                @Html.DropDownListFor(x => x.SelectedEnvironment, Model.Environments, new
+                                                                                      {
+                                                                                          @class = "form-control"
+                                                                                      })
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="form-group">
+                <label for="SelectedTasks">Available Tasks</label>
+                @Html.DropDownListFor(x => x.SelectedTasks, Model.Tasks, new
+                                                                         {
+                                                                             @class = "form-control",
+                                                                             multiple = ""
+                                                                         })
+            </div>
+        </div>
+    </div>
+    
+
+    <hr />
+    <div class="form-group">
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+        <input type="submit" value="Save" class="btn btn-outline-primary" />
+    </div>
+</form>
