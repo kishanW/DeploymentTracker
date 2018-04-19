@@ -16,6 +16,8 @@ namespace DeploymentTracker.web.Models
         public string CompletedBy { get; set; }
         public string Comments { get; set; }
         public string GitHash { get; set; }
+        public string Name { get; set; }
+        public bool IsActive { get; set; }
     }
 
     public class ChecklistTaskEntity : BaseEntity
