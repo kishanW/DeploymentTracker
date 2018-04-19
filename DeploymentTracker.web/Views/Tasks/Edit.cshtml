@@ -4,7 +4,7 @@
     
 }
 
-<h4>TaskEntity</h4>
+<p class="display-4">Edit @Model.Name</p>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -41,15 +41,17 @@
                 <input asp-for="LastModifiedBy" class="form-control" />
                 <span asp-validation-for="LastModifiedBy" class="text-danger"></span>
             </div>
+            <hr />
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <a asp-action="Index" class="btn btn-outline-secondary" >Back to List</a>
+                <input type="submit" value="Save" class="btn btn-outline-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    
 </div>
 
 @section Scripts {

@@ -45,10 +45,10 @@
             @Html.DisplayFor(model => model.LastModifiedBy)
         </dd>
     </dl>
-
+    <hr />
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-default" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+        <input type="submit" value="Delete" class="btn btn-outline-danger" />
     </form>
 </div>
