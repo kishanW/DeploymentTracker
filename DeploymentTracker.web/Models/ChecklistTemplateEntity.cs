@@ -5,7 +5,7 @@ namespace DeploymentTracker.web.Models
     public class ChecklistTemplateEntity: BaseEntity
     {
         public EnvironmentEntity Environment { get; set; }
-        public List<ChecklistTemplateTaskEntity> TemplateTasks { get; set; }
+        public ICollection<ChecklistTemplateTaskEntity> TemplateTasks { get; set; }
     }
 
 

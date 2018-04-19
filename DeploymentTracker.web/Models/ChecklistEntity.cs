@@ -6,7 +6,7 @@ namespace DeploymentTracker.web.Models
     public class ChecklistEntity : BaseEntity
     {
         public EnvironmentEntity Environment { get; set; }
-        public List<ChecklistTaskEntity> Tasks { get; set; }
+        public ICollection<ChecklistTaskEntity> Tasks { get; set; }
         public DateTime? ScheduledOn { get; set; }
         public DateTime? StartedOn { get; set; }
         public DateTime? CompletedOn { get; set; }
