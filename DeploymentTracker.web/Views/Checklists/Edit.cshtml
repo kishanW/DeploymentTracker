@@ -1,0 +1,76 @@
+﻿@model ChecklistEntity
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+
+<p class="display-4">Edit Checklist - @Model.Name</p>
+<hr/>
+
+
+<form asp-action="Edit">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control"/>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="IsActive"/> Active
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="GitHash" class="control-label"></label>
+                <input asp-for="GitHash" class="form-control"/>
+                <span asp-validation-for="GitHash" class="text-danger"></span>
+            </div>
+        </div>
+
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="ScheduledOn" class="control-label"></label>
+                <input asp-for="ScheduledOn" class="form-control"/>
+                <span asp-validation-for="ScheduledOn" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ScheduledBy" class="control-label"></label>
+                <input asp-for="ScheduledBy" class="form-control"/>
+                <span asp-validation-for="ScheduledBy" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Comments" class="control-label"></label>
+                <textarea asp-for="Comments" class="form-control"></textarea>
+                <span asp-validation-for="Comments" class="text-danger"></span>
+            </div>
+        </div>
+
+
+        <input type="hidden" asp-for="Id"/>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <hr/>
+            <div class="form-group">
+                <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+                <input type="submit" value="Save" class="btn btn-outline-primary"/>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

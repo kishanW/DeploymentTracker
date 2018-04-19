@@ -1,0 +1,183 @@
+﻿@model DeploymentTracker.web.Models.ChecklistEntity
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+
+<p class="display-4">Delete</p>
+<p class="lead">Are you sure you want to delete enviroment @Model.Name?</p>
+<hr />
+
+<div class="row">
+
+
+    <div class="col-md-3">
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+
+            <dt>
+                Active
+            </dt>
+            <dd>
+                @if (Model.IsActive)
+                {
+                    <i class="fas fa-check-circle tableRowIcon text-success"></i>
+                }
+                else
+                {
+                    <i class="far fa-check-circle tableRowIcon text-secondary"></i>
+                }
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Comments)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Comments)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.GitHash)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.GitHash)
+            </dd>
+
+
+        </dl>
+    </div>
+
+    <div class="col-lg-3">
+        <dd>Scheduled</dd>
+        <dl>
+            @if (Model.ScheduledOn.HasValue)
+            {
+                <i class="fas fa-check-circle tableRowIcon text-success"></i>
+            }
+            else
+            {
+                <i class="fas fa-check-circle tableRowIcon text-secondary"></i>
+            }
+        </dl>
+
+        <dd>Started</dd>
+        <dl>
+            @if (Model.StartedOn.HasValue)
+            {
+                <i class="fas fa-check-circle tableRowIcon text-success"></i>
+            }
+            else
+            {
+                <i class="fas fa-check-circle tableRowIcon text-secondary"></i>
+            }
+        </dl>
+
+        <dd>Completed</dd>
+        <dl>
+            @if (Model.CompletedOn.HasValue)
+            {
+                <i class="fas fa-check-circle tableRowIcon text-success"></i>
+            }
+            else
+            {
+                <i class="fas fa-check-circle tableRowIcon text-secondary"></i>
+            }
+        </dl>
+
+    </div>
+
+    <div class="col-lg-3">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.CreatedOn)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CreatedOn)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CreatedBy)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ScheduledOn)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.ScheduledOn)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ScheduledBy)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.ScheduledBy)
+            </dd>
+        </dl>
+    </div>
+
+    <div class="col-md-3">
+
+        <dl class="dl-horizontal">
+
+            <dt>
+                @Html.DisplayNameFor(model => model.StartedOn)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.StartedOn)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.CompletedOn)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CompletedOn)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.StartedBy)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.StartedBy)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.CompletedBy)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CompletedBy)
+            </dd>
+
+
+            <dt>
+                @Html.DisplayNameFor(model => model.LastModifiedOn)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.LastModifiedOn)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.LastModifiedBy)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.LastModifiedBy)
+            </dd>
+        </dl>
+    </div>
+
+    <div class="col-md-4"></div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <hr />
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+            <input type="submit" value="Delete" class="btn btn-outline-danger" />
+        </form>
+    </div>
+</div>

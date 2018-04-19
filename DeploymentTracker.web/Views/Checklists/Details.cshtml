@@ -1,0 +1,222 @@
+﻿@model DeploymentTracker.web.Models.ChecklistEntity
+
+@{
+    ViewData["Title"] = "Details";
+    var progress = 25;
+
+    if (Model.ScheduledOn.HasValue)
+    {
+        progress = 50;
+    }
+    else if (Model.StartedOn.HasValue)
+    {
+        progress = 75;
+    }
+    else if (Model.CompletedOn.HasValue)
+    {
+        progress = 100;
+    }
+
+}
+
+<p class="display-4">@Model.Name</p>
+<hr />
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: @progress%" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <hr />
+
+        @if (!Model.ScheduledOn.HasValue)
+        {
+            <div class="alert alert-info" role="alert">
+                @Model.Name hasn't scheduled yet.
+            </div>
+        }
+        else if (!Model.StartedOn.HasValue)
+        {
+            <div class="alert alert-info" role="alert">
+                @Model.Name hasn't started yet.
+            </div>
+        }
+        else if (!Model.CompletedOn.HasValue)
+        {
+            <div class="alert alert-warning" role="alert">
+                @Model.Name hasn't completed yet.
+            </div>
+        }
+    </div>
+</div>
+
+
+<div class="row">
+
+
+    <div class="col-md-3">
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+
+            <dt>
+                Active
+            </dt>
+            <dd>
+                @if (Model.IsActive)
+                {
+                    <i class="fas fa-check-circle tableRowIcon text-success"></i>
+                }
+                else
+                {
+                    <i class="far fa-check-circle tableRowIcon text-secondary"></i>
+                }
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Comments)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Comments)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.GitHash)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.GitHash)
+            </dd>
+
+
+        </dl>
+    </div>
+
+    <div class="col-lg-3">
+        <dd>Scheduled</dd>
+        <dl>
+            @if (Model.ScheduledOn.HasValue)
+            {
+                <i class="fas fa-check-circle tableRowIcon text-success"></i>
+            }
+            else
+            {
+                <i class="fas fa-check-circle tableRowIcon text-secondary"></i>
+            }
+        </dl>
+
+        <dd>Started</dd>
+        <dl>
+            @if (Model.StartedOn.HasValue)
+            {
+                <i class="fas fa-check-circle tableRowIcon text-success"></i>
+            }
+            else
+            {
+                <i class="fas fa-check-circle tableRowIcon text-secondary"></i>
+            }
+        </dl>
+
+        <dd>Completed</dd>
+        <dl>
+            @if (Model.CompletedOn.HasValue)
+            {
+                <i class="fas fa-check-circle tableRowIcon text-success"></i>
+            }
+            else
+            {
+                <i class="fas fa-check-circle tableRowIcon text-secondary"></i>
+            }
+        </dl>
+
+    </div>
+
+    <div class="col-lg-3">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.CreatedOn)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CreatedOn)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CreatedBy)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ScheduledOn)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.ScheduledOn)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ScheduledBy)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.ScheduledBy)
+            </dd>
+        </dl>
+    </div>
+
+    <div class="col-md-3">
+
+        <dl class="dl-horizontal">
+
+            <dt>
+                @Html.DisplayNameFor(model => model.StartedOn)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.StartedOn)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.CompletedOn)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CompletedOn)
+            </dd>
+            
+            <dt>
+                @Html.DisplayNameFor(model => model.StartedBy)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.StartedBy)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.CompletedBy)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CompletedBy)
+            </dd>
+
+
+            <dt>
+                @Html.DisplayNameFor(model => model.LastModifiedOn)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.LastModifiedOn)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.LastModifiedBy)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.LastModifiedBy)
+            </dd>
+        </dl>
+    </div>
+
+    <div class="col-md-4"></div>
+</div>
+
+<hr />
+<div>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">Edit</a>
+</div>
