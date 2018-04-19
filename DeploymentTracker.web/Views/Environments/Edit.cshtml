@@ -1,11 +1,12 @@
-﻿@model DeploymentTracker.web.Models.TaskEntity
+﻿@model DeploymentTracker.web.Models.EnvironmentEntity
 
 @{
-    
+    ViewData["Title"] = "Edit";
 }
 
-<p class="display-4">Edit Task - @Model.Name</p>
+<p class="display-4">Edit Environment - @Model.Name</p>
 <hr />
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
@@ -16,20 +17,19 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Comments" class="control-label"></label>
-                <input asp-for="Comments" class="form-control" />
-                <span asp-validation-for="Comments" class="text-danger"></span>
+                <label asp-for="Url" class="control-label"></label>
+                <input asp-for="Url" class="form-control" />
+                <span asp-validation-for="Url" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="Id" />
             <hr />
             <div class="form-group">
-                <a asp-action="Index" class="btn btn-outline-secondary" >Back to List</a>
+                <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
                 <input type="submit" value="Save" class="btn btn-outline-primary" />
             </div>
         </form>
     </div>
 </div>
-
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

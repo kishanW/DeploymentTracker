@@ -1,8 +1,9 @@
-﻿@model DeploymentTracker.web.Models.TaskEntity
+﻿@model DeploymentTracker.web.Models.EnvironmentEntity
 
 @{
-
+    ViewData["Title"] = "Details";
 }
+
 <p class="display-4">@Model.Name</p>
 <hr />
 
@@ -16,10 +17,10 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Comments)
+            @Html.DisplayNameFor(model => model.Url)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Comments)
+            @Html.DisplayFor(model => model.Url)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.CreatedOn)
@@ -50,5 +51,5 @@
 <hr />
 <div>
     <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">Edit</a> 
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">Edit</a>
 </div>
