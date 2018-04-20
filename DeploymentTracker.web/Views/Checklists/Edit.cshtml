@@ -6,70 +6,152 @@
 
 
 <p class="display-4">Edit Checklist - @Model.Name</p>
-<hr/>
+<hr />
 
 
-<form asp-action="Edit">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control"/>
-                <span asp-validation-for="Name" class="text-danger"></span>
+
+<div class="row">
+
+    <div class="col-lg-6">
+        <p class="h5">Details</p>
+        <hr />
+
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control"/>
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input asp-for="IsActive"/> Active
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="GitHash" class="control-label"></label>
+                        <input asp-for="GitHash" class="form-control"/>
+                        <span asp-validation-for="GitHash" class="text-danger"></span>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ScheduledOn" class="control-label"></label>
+                        <input asp-for="ScheduledOn" class="form-control"/>
+                        <span asp-validation-for="ScheduledOn" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ScheduledBy" class="control-label"></label>
+                        <input asp-for="ScheduledBy" class="form-control"/>
+                        <span asp-validation-for="ScheduledBy" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Comments" class="control-label"></label>
+                        <textarea asp-for="Comments" class="form-control"></textarea>
+                        <span asp-validation-for="Comments" class="text-danger"></span>
+                    </div>
+                </div>
+                <input type="hidden" asp-for="Id"/>
             </div>
 
-            <div class="form-group">
-                <div class="checkbox">
-                    <label>
-                        <input asp-for="IsActive"/> Active
-                    </label>
+            <div class="row">
+                <div class="col-md-12">
+
+                    <hr/>
+                    <div class="form-group">
+                        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+                        <input type="submit" value="Save" class="btn btn-outline-primary"/>
+                    </div>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label asp-for="GitHash" class="control-label"></label>
-                <input asp-for="GitHash" class="form-control"/>
-                <span asp-validation-for="GitHash" class="text-danger"></span>
-            </div>
-        </div>
 
-
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="ScheduledOn" class="control-label"></label>
-                <input asp-for="ScheduledOn" class="form-control"/>
-                <span asp-validation-for="ScheduledOn" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="ScheduledBy" class="control-label"></label>
-                <input asp-for="ScheduledBy" class="form-control"/>
-                <span asp-validation-for="ScheduledBy" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Comments" class="control-label"></label>
-                <textarea asp-for="Comments" class="form-control"></textarea>
-                <span asp-validation-for="Comments" class="text-danger"></span>
-            </div>
-        </div>
-
-
-        <input type="hidden" asp-for="Id"/>
+        </form>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
+    <div class="col-lg-3">
+        <p class="h5">Add Custom Task</p>
+        <hr />
+        <form asp-action="AddCustomTask">
+            <input type="hidden" asp-for="Id" />
 
-            <hr/>
             <div class="form-group">
-                <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
-                <input type="submit" value="Save" class="btn btn-outline-primary"/>
+                <label for="name" class="control-label">Task Name</label>
+                <input name="name" class="form-control" />
             </div>
-        </div>
+
+            <div class="form-group">
+                <label for="comments" class="control-label">Comments</label>
+                <textarea name="comments" class="form-control"></textarea>
+            </div>
+
+            <hr />
+            <div class="form-group">
+                <input type="submit" value="Add" class="btn btn-outline-primary" />
+            </div>
+        </form>
     </div>
-</form>
+
+    <div class="col-lg-3">
+        <p class="h5">Existing Tasks</p>
+        <hr />
+        @if (Model.Tasks.Any())
+        {
+            <label class="control-label">Tasks</label>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>
+
+                            </th>
+                            <th>
+                                Task Name
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var task in Model.Tasks)
+                        {
+                            <tr>
+                                <td>
+                                    @if (Model.IsActive)
+                                    {
+                                        <i class="fas fa-check-circle tableRowIcon text-success"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-check-circle tableRowIcon text-secondary"></i>
+                                    }
+                                </td>
+                                <td>
+                                    @task.Task.Name
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                No tasks were found!
+            </div>
+        }
+    </div>
+
+</div>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

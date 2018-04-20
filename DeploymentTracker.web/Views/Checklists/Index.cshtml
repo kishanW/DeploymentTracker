@@ -11,97 +11,99 @@
 
 @if (Model.Any())
 {
+<div class="table-responsive">
     <table class="table table-bordered table-hover table-striped">
         <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.IsActive)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GitHash)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                Sheduled
-            </th>
-            <th>
-                Started
-            </th>
-            <th>
-                Completed
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedOn)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedBy)
-            </th>
-            <th></th>
-        </tr>
+            <tr>
+                <th>
+                    Active
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.GitHash)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    Sheduled
+                </th>
+                <th>
+                    Started
+                </th>
+                <th>
+                    Completed
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CreatedOn)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CreatedBy)
+                </th>
+                <th></th>
+            </tr>
         </thead>
         <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @if (item.IsActive)
-                    {
-                        <i class="fas fa-check-circle tableRowIcon text-success"></i>
-                    }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.GitHash)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @if (item.ScheduledOn.HasValue)
-                    {
-                        <i class="fas fa-check-circle tableRowIcon text-success"></i>
-                    }
-                    else
-                    {
-                        <i class="fas fa-check-circle tableRowIcon text-secondary"></i>
-                    }
-                </td>
-                <td>
-                    @if (item.StartedOn.HasValue)
-                    {
-                        <i class="fas fa-check-circle tableRowIcon text-success"></i>
-                    }
-                    else
-                    {
-                        <i class="fas fa-check-circle tableRowIcon text-secondary"></i>
-                    }
-                </td>
-                <td>
-                    @if (item.CompletedOn.HasValue)
-                    {
-                        <i class="fas fa-check-circle tableRowIcon text-success"></i>
-                    }
-                    else
-                    {
-                        <i class="fas fa-check-circle tableRowIcon text-secondary"></i>
-                    }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreatedOn)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreatedBy)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-pen-square tableRowIcon"></i></a>
-                    <a asp-action="Details" asp-route-id="@item.Id"><i class="fas fa-info-circle tableRowIcon"></i></a>
-                    <a asp-action="Delete" asp-route-id="@item.Id"><i class="fas fa-times-circle tableRowIcon text-danger"></i></a>
-                </td>
-            </tr>
-        }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (item.IsActive)
+                        {
+                            <i class="fas fa-check-circle tableRowIcon text-success"></i>
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GitHash)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @if (item.ScheduledOn.HasValue)
+                        {
+                            <i class="fas fa-check-circle tableRowIcon text-success"></i>
+                        }
+                        else
+                        {
+                            <i class="fas fa-check-circle tableRowIcon text-black-50"></i>
+                        }
+                    </td>
+                    <td>
+                        @if (item.StartedOn.HasValue)
+                        {
+                            <i class="fas fa-check-circle tableRowIcon text-success"></i>
+                        }
+                        else
+                        {
+                            <i class="fas fa-check-circle tableRowIcon text-black-50"></i>
+                        }
+                    </td>
+                    <td>
+                        @if (item.CompletedOn.HasValue)
+                        {
+                            <i class="fas fa-check-circle tableRowIcon text-success"></i>
+                        }
+                        else
+                        {
+                            <i class="fas fa-check-circle tableRowIcon text-black-50"></i>
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedOn)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedBy)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-pen-square tableRowIcon"></i></a>
+                        <a asp-action="Details" asp-route-id="@item.Id"><i class="fas fa-info-circle tableRowIcon"></i></a>
+                        <a asp-action="Delete" asp-route-id="@item.Id"><i class="fas fa-times-circle tableRowIcon text-danger"></i></a>
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
+</div>
 }
 else
 {

@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using DeploymentTracker.web.Models;
 using System.Web;
+using Microsoft.AspNetCore.Http;
 
 namespace DeploymentTracker.web.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        private readonly IHttpContextAccessor _context;
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor context)
             : base(options)
         {
+            _context = context;
         }
 
         public DbSet<EnvironmentEntity> Environents{ get; set; }
@@ -37,25 +43,30 @@ namespace DeploymentTracker.web.Data
             builder.Entity<ChecklistTaskEntity>().ToTable("ChecklistTaskEntity");
         }
 
-        public override int SaveChanges()
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             var entities = ChangeTracker.Entries()
                                         .Where(x => x.Entity is BaseEntity 
                                                     && (x.State == EntityState.Added || x.State == EntityState.Modified)
                                                     );
 
-            var currentUsername = !string.IsNullOrEmpty(System.Security.Claims.ClaimsPrincipal.Current?.Identity?.Name)
-                                      ? System.Security.Claims.ClaimsPrincipal.Current.Identity.Name
+            var currentUsername = !string.IsNullOrEmpty(_context?.HttpContext?.User?.Identity?.Name)
+                                      ? _context.HttpContext.User.Identity.Name
                                       : "Anonymous";
 
             foreach (var entity in entities)
             {
-                ((BaseEntity)entity.Entity).LastModifiedOn = DateTime.UtcNow;
+                ((BaseEntity)entity.Entity).LastModifiedOn = DateTime.Now;
                 ((BaseEntity)entity.Entity).LastModifiedBy = currentUsername;
+
+                if (entity.State == EntityState.Added)
+                {
+                    ((BaseEntity)entity.Entity).CreatedBy= currentUsername;
+                }
             }
 
 
-            return base.SaveChanges();
+            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }

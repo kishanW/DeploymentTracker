@@ -15,7 +15,6 @@ namespace DeploymentTracker.web.Models
         public Guid Id { get; set; }
         public DateTime CreatedOn { get; set; }
         public string CreatedBy { get; set; }
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime LastModifiedOn { get; set; }
         public string LastModifiedBy { get; set; }
     }

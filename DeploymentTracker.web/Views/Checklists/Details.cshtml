@@ -19,7 +19,7 @@
 
 }
 
-<p class="display-4">@Model.Name</p>
+<p class="display-4">@Model.Environment.Name - @Model.Name</p>
 <hr />
 
 
@@ -55,50 +55,53 @@
 <div class="row">
 
 
-    <div class="col-md-3">
-        <dl class="dl-horizontal">
-            <dt>
-                @Html.DisplayNameFor(model => model.Name)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.Name)
-            </dd>
+<div class="col-md-3">
+    <dl class="dl-horizontal">
+        <dt>
+            Environment
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Environment.Name)
+        </dd>
+            
+        <dt>
+            Active
+        </dt>
+        <dd>
+            @if (Model.IsActive)
+            {
+                <i class="fas fa-check-circle tableRowIcon text-success"></i>
+            }
+            else
+            {
+                <i class="far fa-check-circle tableRowIcon text-secondary"></i>
+            }
+        </dd>
 
-            <dt>
-                Active
-            </dt>
-            <dd>
-                @if (Model.IsActive)
-                {
-                    <i class="fas fa-check-circle tableRowIcon text-success"></i>
-                }
-                else
-                {
-                    <i class="far fa-check-circle tableRowIcon text-secondary"></i>
-                }
-            </dd>
-
+        @if (!string.IsNullOrWhiteSpace(Model.Comments))
+        {
             <dt>
                 @Html.DisplayNameFor(model => model.Comments)
             </dt>
             <dd>
                 @Html.DisplayFor(model => model.Comments)
             </dd>
+        }
 
-            <dt>
-                @Html.DisplayNameFor(model => model.GitHash)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.GitHash)
-            </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.GitHash)
+        </dt>
+        <dd>
+            @string.Format("{0}", Model.GitHash ?? "N/A")
+        </dd>
 
+    </dl>
+</div>
 
-        </dl>
-    </div>
-
-    <div class="col-lg-3">
-        <dd>Scheduled</dd>
-        <dl>
+<div class="col-lg-3">
+    <dl class="dl-horizontal">
+        <dt>Scheduled</dt>
+        <dd>
             @if (Model.ScheduledOn.HasValue)
             {
                 <i class="fas fa-check-circle tableRowIcon text-success"></i>
@@ -107,10 +110,10 @@
             {
                 <i class="fas fa-check-circle tableRowIcon text-secondary"></i>
             }
-        </dl>
+        </dd>
 
-        <dd>Started</dd>
-        <dl>
+        <dt>Started</dt>
+        <dd>
             @if (Model.StartedOn.HasValue)
             {
                 <i class="fas fa-check-circle tableRowIcon text-success"></i>
@@ -119,10 +122,10 @@
             {
                 <i class="fas fa-check-circle tableRowIcon text-secondary"></i>
             }
-        </dl>
+        </dd>
 
-        <dd>Completed</dd>
-        <dl>
+        <dt>Completed</dt>
+        <dd>
             @if (Model.CompletedOn.HasValue)
             {
                 <i class="fas fa-check-circle tableRowIcon text-success"></i>
@@ -131,88 +134,141 @@
             {
                 <i class="fas fa-check-circle tableRowIcon text-secondary"></i>
             }
-        </dl>
+        </dd>
+    </dl>
 
-    </div>
+</div>
 
-    <div class="col-lg-3">
-        <dl>
-            <dt>
-                @Html.DisplayNameFor(model => model.CreatedOn)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.CreatedOn)
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.CreatedBy)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.CreatedBy)
-            </dd>
+<div class="col-lg-3">
+    <dl>
 
+        <dt>
+            Created On
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CreatedOn)
+        </dd>
+        <dt>
+            Created By
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CreatedBy)
+        </dd>
+
+        @if (Model.ScheduledOn.HasValue)
+        {
             <dt>
-                @Html.DisplayNameFor(model => model.ScheduledOn)
+                Scheduled For
             </dt>
             <dd>
                 @Html.DisplayFor(model => model.ScheduledOn)
             </dd>
 
             <dt>
-                @Html.DisplayNameFor(model => model.ScheduledBy)
+                Scheduled By
             </dt>
             <dd>
                 @Html.DisplayFor(model => model.ScheduledBy)
             </dd>
-        </dl>
-    </div>
+        }
 
-    <div class="col-md-3">
-
-        <dl class="dl-horizontal">
-
+        @if (Model.StartedOn.HasValue)
+        {
             <dt>
-                @Html.DisplayNameFor(model => model.StartedOn)
+                Started On
             </dt>
             <dd>
                 @Html.DisplayFor(model => model.StartedOn)
             </dd>
+
             <dt>
-                @Html.DisplayNameFor(model => model.CompletedOn)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.CompletedOn)
-            </dd>
-            
-            <dt>
-                @Html.DisplayNameFor(model => model.StartedBy)
+                Started By
             </dt>
             <dd>
                 @Html.DisplayFor(model => model.StartedBy)
             </dd>
+        }
+
+        @if (Model.CompletedOn.HasValue)
+        {
             <dt>
-                @Html.DisplayNameFor(model => model.CompletedBy)
+                Completed On
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CompletedOn)
+            </dd>
+
+
+            <dt>
+                Completed By
             </dt>
             <dd>
                 @Html.DisplayFor(model => model.CompletedBy)
             </dd>
+        }
 
 
-            <dt>
-                @Html.DisplayNameFor(model => model.LastModifiedOn)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.LastModifiedOn)
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.LastModifiedBy)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.LastModifiedBy)
-            </dd>
-        </dl>
-    </div>
+        <dt>
+            Last Modified On
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LastModifiedOn)
+        </dd>
+        <dt>
+            Last Modified By
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LastModifiedBy)
+        </dd>
+    </dl>
+</div>
 
-    <div class="col-md-4"></div>
+<div class="col-md-3">
+    @if (Model.Tasks.Any())
+    {
+        <h5>Tasks</h5>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>
+
+                    </th>
+                    <th>
+                        Task Name
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var task in Model.Tasks)
+                {
+                    <tr>
+                        <td>
+                            @if (Model.IsActive)
+                            {
+                                <i class="fas fa-check-circle tableRowIcon text-success"></i>
+                            }
+                            else
+                            {
+                                <i class="fas fa-check-circle tableRowIcon text-secondary"></i>
+                            }
+                        </td>
+                        <td>
+                            @task.Task.Name
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning" role="alert">
+            No tasks were found!
+        </div>
+    }
+</div>
 </div>
 
 <hr />

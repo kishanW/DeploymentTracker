@@ -3,7 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using DeploymentTracker.web.Data;
 using DeploymentTracker.web.Models;
+using DeploymentTracker.web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace DeploymentTracker.web.Controllers
@@ -26,6 +28,9 @@ namespace DeploymentTracker.web.Controllers
             }
 
             var checklistEntity = await _context.Checklists
+                                                .Include(x=> x.Environment)
+                                                .Include(x=> x.Tasks)
+                                                .ThenInclude(x=> x.Task)
                                                 .SingleOrDefaultAsync(m => m.Id == id);
             if (checklistEntity == null)
             {
@@ -36,25 +41,87 @@ namespace DeploymentTracker.web.Controllers
         }
 
         // GET: Checklists/Create
-        public IActionResult Create() { return View(); }
+        public IActionResult Create()
+        {
+            var templates = _context.ChecklistTemplates
+                                    .Where(x => x.IsActive)
+                                    .Include(x => x.Environment)
+                                    .Select(x => new SelectListItem { Text = $"{x.Environment.Name} - {x.Name}", Value = x.Id.ToString() }).ToList();
+
+
+            var viewModel = new CreateChecklistViewModel
+                            {
+                                Templates = templates
+            };
+
+            return View(viewModel);
+        }
 
         // POST: Checklists/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ScheduledOn,StartedOn,CompletedOn,ScheduledBy,StartedBy,CompletedBy,Comments,GitHash,Name,IsActive,Id,CreatedOn,CreatedBy,LastModifiedOn,LastModifiedBy")]
-                                                ChecklistEntity checklistEntity)
+        public async Task<IActionResult> Create([Bind("SeletedTemplate,Name,IsActive,ScheduleFor,GitHash,Comments")]
+                                                CreateChecklistViewModel viewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                checklistEntity.Id = Guid.NewGuid();
-                _context.Add(checklistEntity);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var templates = _context.ChecklistTemplates
+                                        .Where(x => x.IsActive)
+                                        .Include(x => x.Environment)
+                                        .Select(x => new SelectListItem { Text = $"{x.Environment.Name} - {x.Name}", Value = x.Id.ToString() }).ToList();
+                viewModel.Templates = templates;
+                return View(viewModel);
             }
 
-            return View(checklistEntity);
+
+            var selectedTemplate = await _context.ChecklistTemplates
+                                                 .Include(x=> x.TemplateTasks)
+                                                 .ThenInclude(x=> x.Task)
+                                                 .Include(x=> x.Environment)
+                                   .SingleOrDefaultAsync(x => x.Id == viewModel.SeletedTemplate);
+
+            if (selectedTemplate == null)
+            {
+                var templates = _context.ChecklistTemplates
+                                        .Where(x => x.IsActive)
+                                        .Include(x => x.Environment)
+                                        .Select(x => new SelectListItem { Text = $"{x.Environment.Name} - {x.Name}", Value = x.Id.ToString() }).ToList();
+                viewModel.Templates = templates;
+                return View(viewModel);
+            }
+
+            var checklistEntity = new ChecklistEntity
+                                  {
+                                      IsActive = viewModel.IsActive,
+                                      Name = viewModel.Name,
+                                      Comments = viewModel.Comments,
+                                      ScheduledOn = viewModel.ScheduleFor,
+                                      GitHash = viewModel.GitHash,
+                                      Environment = selectedTemplate.Environment
+                                  };
+
+            _context.Add(checklistEntity);
+            await _context.SaveChangesAsync();
+
+            
+            var checklistTasks = selectedTemplate.TemplateTasks
+                                                 .Select(x => new ChecklistTaskEntity
+                                                              {
+                                                                  Id = Guid.NewGuid(),
+                                                                  Task = x.Task,
+                                                                  Checklist = checklistEntity
+                                                              })
+                                                 .ToList();
+
+            foreach (var checklistTask in checklistTasks)
+            {
+                _context.ChecklistTasks.Add(checklistTask);
+            }
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Checklists/Edit/5
@@ -65,7 +132,11 @@ namespace DeploymentTracker.web.Controllers
                 return NotFound();
             }
 
-            var checklistEntity = await _context.Checklists.SingleOrDefaultAsync(m => m.Id == id);
+            var checklistEntity = await _context.Checklists
+                                                .Include(x=> x.Environment)
+                                                .Include(x=> x.Tasks)
+                                                .ThenInclude(x=> x.Task)
+                                                .SingleOrDefaultAsync(m => m.Id == id);
             if (checklistEntity == null)
             {
                 return NotFound();
@@ -134,12 +205,54 @@ namespace DeploymentTracker.web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var checklistEntity = await _context.Checklists.SingleOrDefaultAsync(m => m.Id == id);
+            var checklistEntity = await _context.Checklists.Include(x=> x.Tasks).SingleOrDefaultAsync(m => m.Id == id);
+
+            foreach (var task in checklistEntity.Tasks.ToList())
+            {
+                _context.ChecklistTasks.Remove(task);
+            }
+
+
             _context.Checklists.Remove(checklistEntity);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ChecklistEntityExists(Guid id) { return _context.Checklists.Any(e => e.Id == id); }
+
+        public async Task<IActionResult> AddCustomTask(Guid id, string name, string comments)
+        {
+            if (string.IsNullOrWhiteSpace(name) || id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            var checklistEntity = await _context.Checklists
+                                                .SingleOrDefaultAsync(m => m.Id == id);
+            if (checklistEntity == null)
+            {
+                return NotFound();
+            }
+
+            var taskEntity = new TaskEntity
+                             {
+                                 Name = name,
+                                 Comments = comments
+                             };
+
+            _context.Tasks.Add(taskEntity);
+            await _context.SaveChangesAsync();
+
+            var checklistTask = new ChecklistTaskEntity
+                                {
+                                    Checklist = checklistEntity,
+                                    Task = taskEntity
+            };
+
+            _context.ChecklistTasks.Add(checklistTask);
+            await _context.SaveChangesAsync();
+            
+            return RedirectToAction(nameof(Edit), new{id});
+        }
     }
 }
