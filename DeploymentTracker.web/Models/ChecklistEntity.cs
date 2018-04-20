@@ -26,5 +26,6 @@ namespace DeploymentTracker.web.Models
         public TaskEntity Task { get; set; }
         [Required]
         public ChecklistEntity Checklist { get; set; }
+        public bool IsComplete { get; set; }
     }
 }
