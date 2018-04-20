@@ -9,7 +9,9 @@
     ViewData["Title"] = "Log in";
 }
 
-<h2>@ViewData["Title"]</h2>
+<p class="display-4">@ViewData["Title"]</p>
+<hr />
+
 <div class="row">
     <div class="col-md-4">
         <section>
@@ -36,7 +38,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-default">Log in</button>
+                    <button type="submit" class="btn btn-outline-primary">Log in</button>
                 </div>
                 <div class="form-group">
                     <p>
@@ -71,7 +73,7 @@
                             <p>
                                 @foreach (var provider in loginProviders)
                                 {
-                                    <button type="submit" class="btn btn-default" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.Name</button>
+                                    <button type="submit" class="btn btn-outline-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.Name</button>
                                 }
                             </p>
                         </div>
