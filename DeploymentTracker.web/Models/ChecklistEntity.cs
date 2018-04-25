@@ -27,5 +27,6 @@ namespace DeploymentTracker.web.Models
         [Required]
         public ChecklistEntity Checklist { get; set; }
         public bool IsComplete { get; set; }
+        public int SortOrder { get; set; }
     }
 }

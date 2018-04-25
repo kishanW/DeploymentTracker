@@ -11,9 +11,10 @@ using System;
 namespace DeploymentTracker.web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180425013445_adding-sortOrder-column-to-checklistTaskEntity")]
+    partial class addingsortOrdercolumntochecklistTaskEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

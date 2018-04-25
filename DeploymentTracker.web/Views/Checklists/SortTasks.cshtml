@@ -1,0 +1,87 @@
+﻿@using Newtonsoft.Json
+@model ChecklistEntity
+
+@{
+    ViewBag.Title = "Sort Checklist Task";
+}
+
+<p class="display-4">Sort Tasks - @Model.Name</p>
+<hr />
+
+<form asp-action="SortTasks">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" Name="checklistTaskIds" id="checklistTaskIds"/>
+
+    <div class="row">
+        <div class="col-lg-3">
+            <ul id="tasks" class="list-group">
+                @foreach (var task in Model.Tasks.OrderBy(x => x.SortOrder))
+                {
+                    <li class="list-group-item" data-checklistTaskId="@task.Id">@task.Task.Name</li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <hr />
+            <a asp-action="Edit" asp-route-id="@Model.Id" id="edit-link"class="btn btn-outline-secondary">Back To Edit Screen</a>
+            <input type="submit" value="Save" class="btn btn-outline-primary" />
+        </div>
+    </div>
+</form>
+
+<style>
+
+</style>
+
+
+@section Scripts{
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(document).ready(function() {
+
+            $("#tasks").sortable({
+                stop: function() {
+                    UpdateList();
+                }
+            });
+
+        });
+
+        var checklisttasks = [];
+
+        function UpdateList() {
+            checklisttasks = [];
+            var checklistElem = $("#tasks");
+            var checklistTasks = checklistElem.find(".list-group-item");
+
+            checklistTasks.each(function() {
+                var checklistTaskId = $(this).attr("data-checklistTaskId");
+                checklisttasks.push(checklistTaskId);
+            });
+
+            $("#checklistTaskIds").val(JSON.stringify(checklisttasks));
+        }
+
+
+        $(document).on("submit", "form", function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("SortTasks")",
+                data: {
+                    checklistTaskIds: checklisttasks,
+                    id: $("#Id").val()
+                },
+                complete: function () {
+                    var editScreenUrl = $("#edit-link").attr("href");
+                    window.location.replace(editScreenUrl);
+                },
+                dataType: "json"
+            });
+        });
+    </script>
+}

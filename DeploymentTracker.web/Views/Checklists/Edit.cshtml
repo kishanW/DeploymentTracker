@@ -105,40 +105,44 @@
     <div class="col-lg-3">
         <p class="h5">Existing Tasks</p>
         <hr />
+
+        <a asp-action="SortTasks" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Sort Tasks</a>
+        <hr />
+
         @if (Model.Tasks.Any())
         {
             <label class="control-label">Tasks</label>
             <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
-                        <tr>
-                            <th>
+                    <tr>
+                        <th>
 
-                            </th>
-                            <th>
-                                Task Name
-                            </th>
-                        </tr>
+                        </th>
+                        <th>
+                            Task Name
+                        </th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach (var task in Model.Tasks)
-                        {
-                            <tr>
-                                <td>
-                                    @if (task.IsComplete)
-                                    {
-                                        <i class="fas fa-check-circle tableRowIcon text-success"></i>
-                                    }
-                                    else
-                                    {
-                                        <i class="fas fa-check-circle tableRowIcon text-secondary"></i>
-                                    }
-                                </td>
-                                <td>
-                                    @task.Task.Name
-                                </td>
-                            </tr>
-                        }
+                    @foreach (var task in Model.Tasks.OrderBy(x=> x.SortOrder))
+                    {
+                        <tr>
+                            <td>
+                                @if (task.IsComplete)
+                                {
+                                    <i class="fas fa-check-circle tableRowIcon text-success"></i>
+                                }
+                                else
+                                {
+                                    <i class="fas fa-check-circle tableRowIcon text-secondary"></i>
+                                }
+                            </td>
+                            <td>
+                                @task.Task.Name
+                            </td>
+                        </tr>
+                    }
                     </tbody>
                 </table>
             </div>

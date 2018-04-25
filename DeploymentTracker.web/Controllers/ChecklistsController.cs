@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DeploymentTracker.web.Data;
@@ -253,6 +254,74 @@ namespace DeploymentTracker.web.Controllers
             await _context.SaveChangesAsync();
             
             return RedirectToAction(nameof(Edit), new{id});
+        }
+
+        public async Task<IActionResult> SortTasks(Guid id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var checklistEntity = await _context.Checklists
+                                                .Include(x => x.Environment)
+                                                .Include(x => x.Tasks)
+                                                .ThenInclude(x => x.Task)
+                                                .SingleOrDefaultAsync(m => m.Id == id);
+            if (checklistEntity == null)
+            {
+                return NotFound();
+            }
+
+            //view
+            return View(checklistEntity);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SortTasks(Guid id, List<Guid> checklistTaskIds)
+        {
+            var checklistEntity = await _context.Checklists
+                                                .Include(x => x.Environment)
+                                                .Include(x => x.Tasks)
+                                                .ThenInclude(x => x.Task)
+                                                .SingleOrDefaultAsync(m => m.Id == id);
+            if (checklistEntity == null)
+            {
+                return NotFound();
+            }
+
+            for (var i = 0; i < checklistTaskIds.Count; i++)
+            {
+                var checklistTask = _context.ChecklistTasks.FirstOrDefault(x => x.Id == checklistTaskIds[i]);
+                if (checklistTask != null)
+                {
+                    checklistTask.SortOrder = i;
+                    _context.Update(checklistTask);
+                }
+            }
+
+            await _context.SaveChangesAsync();            
+            return Ok();
+        }
+
+        public async Task<IActionResult> Start(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            var checklistEntity = await _context.Checklists
+                                                .Include(x=> x.Environment)
+                                                .Include(x=> x.Tasks)
+                                                .ThenInclude(x=> x.Task)
+                                                .SingleOrDefaultAsync(m => m.Id == id && m.IsActive);
+            if (checklistEntity == null)
+            {
+                return NotFound();
+            }
+
+            return View();
         }
     }
 }
