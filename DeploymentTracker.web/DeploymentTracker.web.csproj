@@ -5,6 +5,12 @@
     <UserSecretsId>aspnet-DeploymentTracker.web-19D3C068-0DE8-4831-9766-DF10890D7368</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Properties\PublishProfiles\DeploymentTrackerweb20180425010317 - Web Deploy.pubxml" />
+    <None Remove="Properties\PublishProfiles\DeploymentTrackerweb20180425010901 - Web Deploy.pubxml" />
+    <None Remove="Properties\PublishProfiles\fiercelyfeistywebsite20171107015637 - Web Deploy.pubxml" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
@@ -17,6 +23,10 @@
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.2" />
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.1" />
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
 
 </Project>
