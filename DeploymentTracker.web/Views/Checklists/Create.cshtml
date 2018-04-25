@@ -13,13 +13,13 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
+
             <div class="form-group">
                 <label asp-for="SeletedTemplate" class="control-label"></label>
                 @Html.DropDownListFor(x => x.SeletedTemplate, Model.Templates, new
-                                                                                      {
-                                                                                          @class = "form-control"
-                                                                                      })
+                {
+                    @class = "form-control"
+                })
             </div>
 
             <div class="form-group">
@@ -37,7 +37,7 @@
 
             <div class="form-group">
                 <label asp-for="ScheduleFor" class="control-label"></label>
-                <input asp-for="ScheduleFor" class="form-control" />
+                <input asp-for="ScheduleFor" type="text" class="form-control date-picker" />
                 <span asp-validation-for="ScheduleFor" class="text-danger"></span>
             </div>
 
