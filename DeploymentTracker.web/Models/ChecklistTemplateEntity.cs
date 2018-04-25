@@ -18,5 +18,6 @@ namespace DeploymentTracker.web.Models
         public ChecklistTemplateEntity Template { get; set; }
         [Required]
         public TaskEntity Task { get; set; }
+        public int SortOrder { get; set; }
     }
 }

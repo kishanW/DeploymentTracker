@@ -75,7 +75,10 @@ namespace DeploymentTracker.web.Controllers
                 return NotFound();
             }
 
-            var checklistTemplateEntity = await _context.ChecklistTemplates.SingleOrDefaultAsync(m => m.Id == id);
+            var checklistTemplateEntity = await _context.ChecklistTemplates
+                                                        .Include(x=> x.TemplateTasks)
+                                                        .ThenInclude(x=> x.Task)
+                                                        .SingleOrDefaultAsync(m => m.Id == id);
             if (checklistTemplateEntity == null)
             {
                 return NotFound();
@@ -249,6 +252,38 @@ namespace DeploymentTracker.web.Controllers
                 }
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> SortTasks(Guid id)
+        {
+            var checklistTemplateEntity = await _context.ChecklistTemplates
+                                                        .Include(x=> x.TemplateTasks)
+                                                        .ThenInclude(x=> x.Task)
+                                                        .SingleOrDefaultAsync(m => m.Id == id);
+            if (checklistTemplateEntity == null)
+            {
+                return NotFound();
+            }
+            return View(checklistTemplateEntity);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> SortTasks(Guid id, List<Guid> checklistTemplateTaskIds)
+        {
+            for (var i = 0; i < checklistTemplateTaskIds.Count; i++)
+            {
+                var checklistTemplateTask = _context.ChecklistTemplateTasks.FirstOrDefault(x => x.Id == checklistTemplateTaskIds[i]);
+                if (checklistTemplateTask != null)
+                {
+                    checklistTemplateTask.SortOrder = i;
+                    _context.Update(checklistTemplateTask);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }

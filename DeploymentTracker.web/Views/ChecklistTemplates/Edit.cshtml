@@ -9,7 +9,7 @@
 <hr />
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-lg-3">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -30,9 +30,50 @@
             <div class="form-group">
                 <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
                 <a asp-action="EditTemplate" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Add Tasks to Template</a>
+                <a asp-action="SortTasks" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Sort Template Tasks</a>
                 <input type="submit" value="Save" class="btn btn-outline-primary" />
             </div>
         </form>
+    </div>
+
+    <div class="col-lg-3">
+        <p class="h5">Existing Tasks</p>
+        <hr />
+
+        <a asp-action="SortTasks" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Sort Tasks</a>
+        <hr />
+
+        @if (Model.TemplateTasks.Any())
+        {
+            <label class="control-label">Tasks</label>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>
+                                Task Name
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var task in Model.TemplateTasks.OrderBy(x => x.SortOrder))
+                        {
+                            <tr>
+                                <td>
+                                    @task.Task.Name
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                No tasks were found!
+            </div>
+        }
     </div>
 </div>
 

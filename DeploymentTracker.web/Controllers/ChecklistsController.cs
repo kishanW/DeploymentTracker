@@ -112,6 +112,7 @@ namespace DeploymentTracker.web.Controllers
                                                               {
                                                                   Id = Guid.NewGuid(),
                                                                   Task = x.Task,
+                                                                  SortOrder = x.SortOrder,
                                                                   Checklist = checklistEntity
                                                               })
                                                  .ToList();
@@ -258,11 +259,6 @@ namespace DeploymentTracker.web.Controllers
 
         public async Task<IActionResult> SortTasks(Guid id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var checklistEntity = await _context.Checklists
                                                 .Include(x => x.Environment)
                                                 .Include(x => x.Tasks)
