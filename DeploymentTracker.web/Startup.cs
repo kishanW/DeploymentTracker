@@ -66,6 +66,8 @@ namespace DeploymentTracker.web
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
+            app.UseWebSockets();
+
             app.UseFileServer();
             app.UseSignalR(routes =>
             {
