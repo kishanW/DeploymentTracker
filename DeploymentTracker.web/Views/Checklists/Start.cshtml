@@ -1,0 +1,34 @@
+﻿@model ChecklistEntity
+
+<div class="row">
+    <div class="col-lg-12">
+        <p class="display-4">Start Checklist - @Model.Name</p>
+        <hr />
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-4"></div>
+    <div class="col-lg-4">
+        
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Start Checklist</h5>
+
+                <p class="card-text">
+                    You are about to start the checklist @Model.Name.
+                    @if (Model.ScheduledOn.HasValue)
+                    {
+                        <text>This deployment is scheduled for <b>@string.Format("{0:MM/dd/yyyy}", Model.ScheduledOn)</b>.</text>
+                    }
+                    Do you want to continue?
+                </p>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Go Back</a>
+                <a asp-action="Progress" asp-route-id="@Model.Id" class="btn btn-outline-primary">Continue</a>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-lg-4"></div>
+</div>

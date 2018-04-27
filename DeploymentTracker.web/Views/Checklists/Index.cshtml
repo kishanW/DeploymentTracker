@@ -95,9 +95,23 @@
                         @Html.DisplayFor(modelItem => item.CreatedBy)
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-pen-square tableRowIcon"></i></a>
                         <a asp-action="Details" asp-route-id="@item.Id"><i class="fas fa-info-circle tableRowIcon"></i></a>
+                        
+                        @if (!item.CompletedOn.HasValue)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-pen-square tableRowIcon"></i></a>
+                        }
+
                         <a asp-action="Delete" asp-route-id="@item.Id"><i class="fas fa-times-circle tableRowIcon text-danger"></i></a>
+
+                        @if (!item.CompletedOn.HasValue && item.StartedOn.HasValue)
+                        {
+                            <a asp-action="Progress" asp-route-id="@item.Id"><i class="fas fa-spinner tableRowIcon text-info"></i></a>
+                        }
+                        else if (!item.CompletedOn.HasValue)
+                        {
+                            <a asp-action="Start" asp-route-id="@item.Id"><i class="fas fa-play-circle tableRowIcon text-success"></i></a>
+                        }
                     </td>
                 </tr>
             }

@@ -2,17 +2,17 @@
 
 @{
     ViewData["Title"] = "Details";
-    var progress = 25;
+    var progress = 10;
 
     if (Model.ScheduledOn.HasValue)
     {
+        progress = 30;
+    }
+    if (Model.StartedOn.HasValue)
+    {
         progress = 50;
     }
-    else if (Model.StartedOn.HasValue)
-    {
-        progress = 75;
-    }
-    else if (Model.CompletedOn.HasValue)
+    if (Model.CompletedOn.HasValue)
     {
         progress = 100;
     }
@@ -39,13 +39,20 @@
         else if (!Model.StartedOn.HasValue)
         {
             <div class="alert alert-info" role="alert">
-                @Model.Name hasn't started yet.
+                @Model.Name hasn't started yet. <a asp-action="Start" asp-route-id="@Model.Id">Click here to start the checklist.</a>
             </div>
         }
         else if (!Model.CompletedOn.HasValue)
         {
             <div class="alert alert-warning" role="alert">
-                @Model.Name hasn't completed yet.
+                <ul>
+                    <li>
+                        @Model.Name is in progress. This hasn't completed yet. <a asp-action="Progress" asp-route-id="@Model.Id">Click here to go to progress screen.</a>
+                    </li>
+                    <li>
+                        You can complete this deployment. <a asp-action="CompleteChecklist" asp-route-id="@Model.Id">Click here to complete the deployment.</a>
+                    </li>
+                </ul>
             </div>
         }
     </div>
@@ -254,7 +261,13 @@
                             }
                         </td>
                         <td>
-                            @task.Task.Name
+                            <p class="text-muted"><strong>@task.Task.Name</strong></p>
+                            @if (task.IsComplete)
+                            {
+                                <p class="mark">
+                                    Completed on @string.Format("{0:MM/dd/yyyy hh:mm tt}", task.CompletedOn) by @task.CompletedBy.
+                                </p>
+                            }
                         </td>
                     </tr>
                 }
@@ -274,5 +287,9 @@
 <hr />
 <div>
     <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">Edit</a>
+    @if (!Model.CompletedOn.HasValue)
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">Edit</a>
+    }
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">Delete</a>
 </div>

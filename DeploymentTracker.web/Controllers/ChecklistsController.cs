@@ -99,6 +99,7 @@ namespace DeploymentTracker.web.Controllers
                                       Name = viewModel.Name,
                                       Comments = viewModel.Comments,
                                       ScheduledOn = viewModel.ScheduleFor,
+                                      ScheduledBy = viewModel.ScheduleFor.HasValue ? User.Identity.Name : null,
                                       GitHash = viewModel.GitHash,
                                       Environment = selectedTemplate.Environment
                                   };
@@ -152,7 +153,7 @@ namespace DeploymentTracker.web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ScheduledOn,StartedOn,CompletedOn,ScheduledBy,StartedBy,CompletedBy,Comments,GitHash,Name,IsActive,Id,CreatedOn,CreatedBy,LastModifiedOn,LastModifiedBy")]
+        public async Task<IActionResult> Edit(Guid id, [Bind("ScheduledOn,ScheduledBy,Comments,GitHash,Name,IsActive")]
                                               ChecklistEntity checklistEntity)
         {
             if (id != checklistEntity.Id)
@@ -307,6 +308,22 @@ namespace DeploymentTracker.web.Controllers
                 return BadRequest();
             }
 
+            var checklistEntity = await _context.Checklists.FirstOrDefaultAsync(x => x.Id == id);
+            if (checklistEntity == null)
+            {
+                return NotFound();
+            }
+
+            return View(checklistEntity);
+        }
+
+        public async Task<IActionResult> Progress(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
             var checklistEntity = await _context.Checklists
                                                 .Include(x=> x.Environment)
                                                 .Include(x=> x.Tasks)
@@ -317,7 +334,86 @@ namespace DeploymentTracker.web.Controllers
                 return NotFound();
             }
 
-            return View();
+            checklistEntity.StartedOn = DateTime.Now;
+            checklistEntity.StartedBy = User.Identity.Name;
+            await _context.SaveChangesAsync();
+
+            return View(checklistEntity);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> CompleteTask(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            var checklistTaskEntity = await _context.ChecklistTasks.FirstOrDefaultAsync(x => x.Id == id);
+            if (checklistTaskEntity == null)
+            {
+                return NotFound();
+            }
+            
+            checklistTaskEntity.IsComplete = !checklistTaskEntity.IsComplete;
+            if (checklistTaskEntity.IsComplete)
+            {
+                checklistTaskEntity.CompletedBy = User.Identity.Name;
+                checklistTaskEntity.CompletedOn = DateTime.Now;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return new JsonResult(new
+                                  {
+                                      id,
+                                      checklistTaskEntity.IsComplete
+                                  });
+        }
+
+        public async Task<IActionResult> CompleteChecklist(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            var checklistEntity = await _context.Checklists
+                                                .Include(x => x.Environment)
+                                                .Include(x => x.Tasks)
+                                                .ThenInclude(x => x.Task)
+                                                .SingleOrDefaultAsync(m => m.Id == id && m.IsActive);
+            if (checklistEntity == null)
+            {
+                return NotFound();
+            }
+
+            return View(checklistEntity);
+        }
+
+        public async Task<IActionResult> CompleteChecklistConfirm(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            var checklistEntity = await _context.Checklists
+                                                .Include(x => x.Environment)
+                                                .Include(x => x.Tasks)
+                                                .ThenInclude(x => x.Task)
+                                                .SingleOrDefaultAsync(m => m.Id == id && m.IsActive);
+            if (checklistEntity == null)
+            {
+                return NotFound();
+            }
+
+
+            checklistEntity.CompletedOn = DateTime.Now;
+            checklistEntity.CompletedBy = User.Identity.Name;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Details), new { id });
         }
     }
 }

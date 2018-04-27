@@ -28,5 +28,7 @@ namespace DeploymentTracker.web.Models
         public ChecklistEntity Checklist { get; set; }
         public bool IsComplete { get; set; }
         public int SortOrder { get; set; }
+        public DateTime? CompletedOn { get; set; }
+        public string CompletedBy { get; set; }
     }
 }
